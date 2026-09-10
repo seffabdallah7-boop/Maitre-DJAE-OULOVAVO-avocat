@@ -1,16 +1,10 @@
 /* ==========================================================================
    Maître DJAÉ OULOVAVO Mohamed — Application JS
-   Version finale : Multilingue FR/EN/AR · Theme Manager · Modales · WhatsApp
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ============================================================
-  // CONFIG
-  // ============================================================
   const CONFIG = {
-    // Numéro WhatsApp au format international SANS "+" ni espaces
-    // Ex : 269XXXXXXX (Comores) ou 336XXXXXXXX (France)
     whatsappNumber: '33646135201',
   };
 
@@ -24,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       "hero.badge": "Assermenté Barreau",
       "hero.eyebrow": "Avocat au Barreau de Moroni",
-      "hero.eyebrow2": "Docteur en droit & professeur des universités",
+      "hero.eyebrow2": "Docteur en droit & enseignant-chercheur",
       "hero.title": "Docteur en droit privé — Université Lumière Lyon 2",
       "hero.tagline": "J'accompagne particuliers, entreprises et institutions avec rigueur, stratégie et dévouement dans la défense de leurs droits et la sécurisation de leurs enjeux juridiques.",
       "hero.cta_main": "Prendre un Rendez-vous",
@@ -80,12 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "parcours.sub": "Une alliance unique entre enseignement universitaire de haut niveau et pratique du barreau.",
       "parcours.p1_title": "Membre du Conseil d'Administration",
       "parcours.p1_desc": "Engagement actif dans la gouvernance universitaire et le développement des programmes juridiques.",
-      "parcours.p2_title": "Docteur en Droit Privé",
+      "parcours.p2_title": "Doctorat en droit privé : Droit – Justice – Procédure",
       "parcours.p2_desc": "Obtention du Doctorat d'État spécialité droit des affaires et droit des contrats.",
       "parcours.p3_title": "École des Avocats (EDARA)",
-      "parcours.p3_desc": "Formation professionnelle d'avocat, déontologie, plaidoirie et pratique judiciaire.",
+      "parcours.p3_desc": "Spécialité — Droit des affaires — Droit des contrats — Droit pénal — Procédure pénale",
       "parcours.p4_title": "Cabinets d'Avocats à Lyon",
-      "parcours.p4_desc": "Collaborations et juriste spécialisé en droit des contrats internationaux, pénal et affaires.",
+      "parcours.p4_desc": "Cabinets d'avocat Hamel & Parado · Bénédicte RAJOT (Droit des contrats, Droit des affaires)",
       "parcours.p5_title": "Avocat inscrit au Barreau de Moroni",
       "parcours.p5_desc": "Exercice libéral complet et défense des intérêts de nos mandants aux Comores et à l'international.",
 
@@ -140,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "nav.sub": "Law Firm", "nav.domaines": "Practice Areas", "nav.parcours": "Background",
       "nav.enseignement": "Academia", "nav.contact": "Contact", "nav.cta": "Book Now",
       "hero.badge": "Admitted to the Bar", "hero.eyebrow": "Attorney at Law — Moroni Bar",
-      "hero.eyebrow2": "Doctor of Law & University Professor",
+      "hero.eyebrow2": "Doctor of Law & Researcher",
       "hero.title": "Doctor of Private Law — Université Lumière Lyon 2",
       "hero.tagline": "Providing individuals, businesses, and institutions with rigorous, strategic, and dedicated legal representation and counsel.",
       "hero.cta_main": "Book a Consultation",
@@ -187,12 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "parcours.sub": "A unique synergy between high-level university teaching and law practice.",
       "parcours.p1_title": "Member of the Board of Directors",
       "parcours.p1_desc": "Active participation in university governance and academic law programs.",
-      "parcours.p2_title": "Doctor of Private Law (PhD)",
+      "parcours.p2_title": "PhD in Private Law: Law – Justice – Procedure",
       "parcours.p2_desc": "Awarded PhD specializing in business and contract law.",
       "parcours.p3_title": "Bar Training Institute (EDARA)",
-      "parcours.p3_desc": "Professional lawyer qualification, ethics, advocacy, and court practice.",
+      "parcours.p3_desc": "Specialization — Business Law — Contract Law — Criminal Law — Criminal Procedure",
       "parcours.p4_title": "Law Firms in Lyon, France",
-      "parcours.p4_desc": "Legal practitioner specializing in international contracts, criminal, and business law.",
+      "parcours.p4_desc": "Hamel & Parado · Bénédicte RAJOT (Contract Law, Business Law)",
       "parcours.p5_title": "Attorney Admitted to the Moroni Bar",
       "parcours.p5_desc": "Full legal practice protecting client interests in Comoros and internationally.",
       "teach.eyebrow": "Academia & Teaching", "teach.title": "University Academic Roles",
@@ -239,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "nav.sub": "مكتب المحاماة", "nav.domaines": "مجالات الاختصاص", "nav.parcours": "المسار المهني",
       "nav.enseignement": "التعليم التدريسي", "nav.contact": "الاتصال", "nav.cta": "حجز موعد",
       "hero.badge": "محامٍ معتمد بالجدول", "hero.eyebrow": "محامٍ لدى هيئة المحامين بموروني",
-      "hero.eyebrow2": "دكتور في القانون وأستاذ جامعي",
+      "hero.eyebrow2": "دكتور في القانون وباحث",
       "hero.title": "دكتور في القانون الخاص — جامعة ليون 2",
       "hero.tagline": "نرافق الأفراد والشركات والمؤسسات بدقة واستراتيجية وتكتم تام للدفاع عن حقوقهم.",
       "hero.cta_main": "حجز موعد استشارة",
@@ -271,9 +265,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "parcours.eyebrow": "المسار", "parcours.title": "التكوين والمسار",
       "parcours.sub": "مزيج فريد بين التدريس الجامعي والممارسة.",
       "parcours.p1_title": "عضو مجلس الإدارة", "parcours.p1_desc": "مشاركة فعالة في الحوكمة.",
-      "parcours.p2_title": "دكتور في القانون الخاص", "parcours.p2_desc": "دكتوراه في قانون الأعمال.",
-      "parcours.p3_title": "مدرسة المحاماة", "parcours.p3_desc": "التكوين المهني للمحاماة.",
-      "parcours.p4_title": "مكاتب المحاماة بليون", "parcours.p4_desc": "خبرة في العقود الدولية.",
+      "parcours.p2_title": "دكتوراه في القانون الخاص: القانون – العدالة – الإجراءات",
+      "parcours.p2_desc": "دكتوراه في قانون الأعمال والعقود.",
+      "parcours.p3_title": "مدرسة المحاماة (EDARA)",
+      "parcours.p3_desc": "التخصص — قانون الأعمال — قانون العقود — القانون الجنائي — الإجراءات الجنائية",
+      "parcours.p4_title": "مكاتب المحاماة بليون",
+      "parcours.p4_desc": "مكتبا هاميل وبارادو · بينيديكت راجو (قانون العقود، قانون الأعمال)",
       "parcours.p5_title": "محامٍ بهيئة موروني", "parcours.p5_desc": "ممارسة حرة كاملة.",
       "teach.eyebrow": "التدريس", "teach.title": "الجامعات والتدريس",
       "teach.sub": "نقل المعرفة في صميم الصرامة القانونية.",
@@ -348,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTheme(localStorage.getItem('mdo_theme') || 'light');
 
   // ============================================================
-  // 4. SCROLL EFFECTS (progress bar + nav scrolled)
+  // 4. SCROLL EFFECTS
   // ============================================================
   const mainNav = document.getElementById('main-nav');
   const progress = document.getElementById('scroll-progress');
@@ -364,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
   onScroll();
 
   // ============================================================
-  // 5. MODALS (Booking + Detail)
+  // 5. MODALS
   // ============================================================
   const bookingModal = document.getElementById('booking-modal');
   const detailModal = document.getElementById('detail-modal');
@@ -394,7 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Backdrop click to close
   [bookingModal, detailModal].forEach(m => {
     m.addEventListener('click', e => {
       const r = m.getBoundingClientRect();
@@ -406,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 6. BOOKING FORM → WHATSAPP (version nettoyée, sans emojis problématiques)
+  // 6. BOOKING FORM → WHATSAPP
   // ============================================================
   document.getElementById('booking-form').addEventListener('submit', e => {
     e.preventDefault();
@@ -424,7 +420,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
       : date;
 
-    // Message en texte pur — 100% compatible tous appareils / tous clients WhatsApp
     const msg = [
       '*NOUVELLE DEMANDE DE RENDEZ-VOUS*',
       '',
@@ -444,7 +439,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 '&text=' + encodeURIComponent(msg);
 
     window.open(url, '_blank');
-
     showToast('Merci ' + name + ', votre demande a été préparée.');
 
     setTimeout(() => {
@@ -454,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 7. CONTACT FORM → WHATSAPP (version nettoyée)
+  // 7. CONTACT FORM → WHATSAPP
   // ============================================================
   document.getElementById('contact-form').addEventListener('submit', e => {
     e.preventDefault();
@@ -489,14 +483,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 '&text=' + encodeURIComponent(msg);
 
     window.open(url, '_blank');
-
     showToast('Merci ' + name + ', votre message va être transmis.');
-
     e.target.reset();
   });
 
   // ============================================================
-  // 8. TOAST NOTIFICATIONS
+  // 8. TOAST
   // ============================================================
   function showToast(text) {
     const container = document.getElementById('toast-container');
@@ -572,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 12. LEGAL / PRIVACY DETAIL MODAL
+  // 12. LEGAL / PRIVACY MODAL
   // ============================================================
   const detailBody = document.getElementById('detail-modal-body');
 
@@ -614,7 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 13. SMOOTH ANCHOR SCROLL (offset sticky nav)
+  // 13. SMOOTH ANCHOR SCROLL
   // ============================================================
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
@@ -629,7 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 14. PARALLAXE DES ORBES AU MOUVEMENT DE LA SOURIS
+  // 14. PARALLAXE ORBES
   // ============================================================
   const orbs = document.querySelectorAll('.orb');
   let mouseX = 0, mouseY = 0;
@@ -652,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (orbs.length) animateOrbs();
 
   // ============================================================
-  // 15. EFFET TILT 3D SUR LES CARTES
+  // 15. TILT 3D
   // ============================================================
   const tiltCards = document.querySelectorAll('.domain-card, .value-card, .teach-card');
 
@@ -665,12 +657,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = card.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
-
         const rotX = -y * 6;
         const rotY = x * 6;
-        const lift = -8;
-
-        card.style.transform = `perspective(1000px) translateY(${lift}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        card.style.transform = `perspective(1000px) translateY(-8px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       });
     });
 
@@ -681,26 +670,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 16. EFFET RIPPLE SUR LES BOUTONS
+  // 16. RIPPLE
   // ============================================================
   document.querySelectorAll('.cta-btn, .nav-cta-btn, .float-btn, .domain-cta-btn').forEach(btn => {
     btn.addEventListener('click', function (e) {
       const rect = this.getBoundingClientRect();
       const ripple = document.createElement('span');
       ripple.className = 'ripple';
-
       const size = Math.max(rect.width, rect.height);
       ripple.style.width = ripple.style.height = size + 'px';
       ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
       ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-
       this.appendChild(ripple);
       setTimeout(() => ripple.remove(), 800);
     });
   });
 
   // ============================================================
-  // 17. NAVIGATION ACTIVE AU SCROLL
+  // 17. NAV ACTIVE
   // ============================================================
   const sections = document.querySelectorAll('section[id]');
   const navAnchors = document.querySelectorAll('nav.links a');
