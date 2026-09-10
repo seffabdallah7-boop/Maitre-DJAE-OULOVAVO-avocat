@@ -1,5 +1,6 @@
 /* ==========================================================================
    Maître DJAÉ OULOVAVO Mohamed — Application JS
+   Version optimisée : performances + responsive animations
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -7,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const CONFIG = {
     whatsappNumber: '33646135201',
   };
+
+  const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   // ============================================================
   // 1. TRANSLATIONS (FR / EN / AR)
@@ -74,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "parcours.sub": "Une alliance unique entre enseignement universitaire de haut niveau et pratique du barreau.",
       "parcours.p1_title": "Membre du Conseil d'Administration",
       "parcours.p1_desc": "Engagement actif dans la gouvernance universitaire et le développement des programmes juridiques.",
-      "parcours.p2_title": "Doctorat en droit privé : Droit – Justice – Procédure",
-      "parcours.p2_desc": "Obtention du Doctorat d'État spécialité droit des affaires et droit des contrats.",
+      "parcours.p2_title": "Doctorat en droit privé",
+      "parcours.p2_desc": "Obtention du doctorat d'État spécialité : Droit, Justice, Procédure",
       "parcours.p3_title": "École des Avocats (EDARA)",
       "parcours.p3_desc": "Spécialité — Droit des affaires — Droit des contrats — Droit pénal — Procédure pénale",
       "parcours.p4_title": "Cabinets d'Avocats à Lyon",
@@ -181,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "parcours.sub": "A unique synergy between high-level university teaching and law practice.",
       "parcours.p1_title": "Member of the Board of Directors",
       "parcours.p1_desc": "Active participation in university governance and academic law programs.",
-      "parcours.p2_title": "PhD in Private Law: Law – Justice – Procedure",
-      "parcours.p2_desc": "Awarded PhD specializing in business and contract law.",
+      "parcours.p2_title": "PhD in Private Law",
+      "parcours.p2_desc": "Awarded State Doctorate specializing in: Law, Justice, Procedure",
       "parcours.p3_title": "Bar Training Institute (EDARA)",
       "parcours.p3_desc": "Specialization — Business Law — Contract Law — Criminal Law — Criminal Procedure",
       "parcours.p4_title": "Law Firms in Lyon, France",
@@ -265,8 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "parcours.eyebrow": "المسار", "parcours.title": "التكوين والمسار",
       "parcours.sub": "مزيج فريد بين التدريس الجامعي والممارسة.",
       "parcours.p1_title": "عضو مجلس الإدارة", "parcours.p1_desc": "مشاركة فعالة في الحوكمة.",
-      "parcours.p2_title": "دكتوراه في القانون الخاص: القانون – العدالة – الإجراءات",
-      "parcours.p2_desc": "دكتوراه في قانون الأعمال والعقود.",
+      "parcours.p2_title": "دكتوراه في القانون الخاص",
+      "parcours.p2_desc": "الحصول على دكتوراه الدولة في تخصص: القانون، العدالة، الإجراءات",
       "parcours.p3_title": "مدرسة المحاماة (EDARA)",
       "parcours.p3_desc": "التخصص — قانون الأعمال — قانون العقود — القانون الجنائي — الإجراءات الجنائية",
       "parcours.p4_title": "مكاتب المحاماة بليون",
@@ -621,53 +624,72 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 14. PARALLAXE ORBES
+  // 14. PARALLAXE ORBES (optimisé : desktop + pause auto)
   // ============================================================
   const orbs = document.querySelectorAll('.orb');
-  let mouseX = 0, mouseY = 0;
-  let currentOrbX = 0, currentOrbY = 0;
 
-  document.addEventListener('mousemove', e => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  function animateOrbs() {
-    currentOrbX += (mouseX - currentOrbX) * 0.06;
-    currentOrbY += (mouseY - currentOrbY) * 0.06;
-    orbs.forEach((orb, i) => {
-      const depth = (i + 1) * 12;
-      orb.style.transform = `translate(${currentOrbX * depth}px, ${currentOrbY * depth}px)`;
-    });
-    requestAnimationFrame(animateOrbs);
-  }
-  if (orbs.length) animateOrbs();
-
-  // ============================================================
-  // 15. TILT 3D
-  // ============================================================
-  const tiltCards = document.querySelectorAll('.domain-card, .value-card, .teach-card');
-
-  tiltCards.forEach(card => {
+  if (orbs.length && isDesktop) {
+    let mouseX = 0, mouseY = 0;
+    let currentOrbX = 0, currentOrbY = 0;
     let rafId = null;
+    let isRunning = false;
 
-    card.addEventListener('mousemove', e => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        const rotX = -y * 6;
-        const rotY = x * 6;
-        card.style.transform = `perspective(1000px) translateY(-8px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    document.addEventListener('mousemove', e => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (!isRunning) startOrbs();
+    }, { passive: true });
+
+    function startOrbs() {
+      isRunning = true;
+      rafId = requestAnimationFrame(animateOrbs);
+    }
+
+    function animateOrbs() {
+      currentOrbX += (mouseX - currentOrbX) * 0.06;
+      currentOrbY += (mouseY - currentOrbY) * 0.06;
+
+      const done = Math.abs(mouseX - currentOrbX) < 0.001 &&
+                   Math.abs(mouseY - currentOrbY) < 0.001;
+
+      orbs.forEach((orb, i) => {
+        const depth = (i + 1) * 12;
+        orb.style.transform = `translate3d(${currentOrbX * depth}px, ${currentOrbY * depth}px, 0)`;
+      });
+
+      if (done) {
+        isRunning = false;
+        return;
+      }
+      rafId = requestAnimationFrame(animateOrbs);
+    }
+  }
+
+  // ============================================================
+  // 15. TILT 3D (desktop uniquement)
+  // ============================================================
+  if (isDesktop) {
+    const tiltCards = document.querySelectorAll('.domain-card, .value-card, .teach-card');
+
+    tiltCards.forEach(card => {
+      let rafId = null;
+
+      card.addEventListener('mousemove', e => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = `perspective(1000px) translateY(-8px) rotateX(${-y * 6}deg) rotateY(${x * 6}deg)`;
+        });
+      });
+
+      card.addEventListener('mouseleave', () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        card.style.transform = '';
       });
     });
-
-    card.addEventListener('mouseleave', () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      card.style.transform = '';
-    });
-  });
+  }
 
   // ============================================================
   // 16. RIPPLE
