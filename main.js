@@ -1,15 +1,21 @@
 /* ==========================================================================
    Maître DJAÉ OULOVAVO Mohamed — Application JS
+   Version finale : Multilingue FR/EN/AR · Theme Manager · Modales · WhatsApp
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ============================================================
+  // CONFIG
+  // ============================================================
   const CONFIG = {
+    // Numéro WhatsApp au format international SANS "+" ni espaces
+    // Ex : 269XXXXXXX (Comores) ou 336XXXXXXXX (France)
     whatsappNumber: '33646135201',
   };
 
   // ============================================================
-  // TRANSLATIONS
+  // 1. TRANSLATIONS (FR / EN / AR)
   // ============================================================
   const translations = {
     fr: {
@@ -300,18 +306,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // ---- LANGUAGE ----
+  // ============================================================
+  // 2. LANGUAGE SWITCHER
+  // ============================================================
   const langSwitcher = document.getElementById('lang-switcher');
 
   function setLanguage(lang) {
     if (!translations[lang]) return;
     document.documentElement.lang = lang;
     document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+
     const dict = translations[lang];
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (dict[key]) el.textContent = dict[key];
     });
+
     localStorage.setItem('mdo_lang', lang);
   }
 
@@ -320,7 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
   langSwitcher.value = savedLang;
   setLanguage(savedLang);
 
-  // ---- THEME ----
+  // ============================================================
+  // 3. THEME MANAGER
+  // ============================================================
   const themeBtn = document.getElementById('theme-toggle');
 
   function setTheme(theme) {
@@ -335,7 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setTheme(localStorage.getItem('mdo_theme') || 'light');
 
-  // ---- SCROLL ----
+  // ============================================================
+  // 4. SCROLL EFFECTS (progress bar + nav scrolled)
+  // ============================================================
   const mainNav = document.getElementById('main-nav');
   const progress = document.getElementById('scroll-progress');
 
@@ -345,10 +359,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progress) progress.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
     if (mainNav) mainNav.classList.toggle('scrolled', y > 30);
   }
+
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // ---- MODALS ----
+  // ============================================================
+  // 5. MODALS (Booking + Detail)
+  // ============================================================
   const bookingModal = document.getElementById('booking-modal');
   const detailModal = document.getElementById('detail-modal');
 
@@ -357,64 +374,137 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const type = btn.getAttribute('data-booking-type');
       const sel = document.getElementById('booking-type');
+
       if (type && sel) {
-        const map = { affaires: 'Droit des Affaires & Contrats', penal: 'Droit Pénal & Procédure', tourisme: 'Droit du Tourisme & Hôtellerie' };
+        const map = {
+          affaires: 'Droit des Affaires & Contrats',
+          penal: 'Droit Pénal & Procédure',
+          tourisme: 'Droit du Tourisme & Hôtellerie'
+        };
         if (map[type]) sel.value = map[type];
       }
+
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const dateInput = document.getElementById('booking-date');
       dateInput.valueAsDate = tomorrow;
       dateInput.min = new Date().toISOString().split('T')[0];
+
       bookingModal.showModal();
     });
   });
 
+  // Backdrop click to close
   [bookingModal, detailModal].forEach(m => {
     m.addEventListener('click', e => {
       const r = m.getBoundingClientRect();
-      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) m.close();
+      const inDialog =
+        e.clientX >= r.left && e.clientX <= r.right &&
+        e.clientY >= r.top && e.clientY <= r.bottom;
+      if (!inDialog) m.close();
     });
   });
 
-  // ---- BOOKING FORM → WHATSAPP ----
+  // ============================================================
+  // 6. BOOKING FORM → WHATSAPP (version nettoyée, sans emojis problématiques)
+  // ============================================================
   document.getElementById('booking-form').addEventListener('submit', e => {
     e.preventDefault();
+
     const type = document.getElementById('booking-type').value;
     const date = document.getElementById('booking-date').value;
     const time = document.getElementById('booking-time').value;
     const name = document.getElementById('booking-name').value.trim();
     const phone = document.getElementById('booking-phone').value.trim();
     const email = document.getElementById('booking-email').value.trim();
-    const dateFormatted = date ? new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : date;
-    const msg = `*Nouvelle demande de rendez-vous*\n\n👤 ${name}\n📞 ${phone}\n✉️ ${email}\n\n📋 ${type}\n📅 ${dateFormatted}\n🕐 ${time}\n\n— Envoyé depuis le site`;
-    window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-    showToast(`✅ Merci ${name}, votre demande a été préparée.`);
-    setTimeout(() => { bookingModal.close(); document.getElementById('booking-form').reset(); }, 800);
+
+    const dateFormatted = date
+      ? new Date(date).toLocaleDateString('fr-FR', {
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        })
+      : date;
+
+    // Message en texte pur — 100% compatible tous appareils / tous clients WhatsApp
+    const msg = [
+      '*NOUVELLE DEMANDE DE RENDEZ-VOUS*',
+      '',
+      '*Nom :* ' + name,
+      '*Téléphone :* ' + phone,
+      '*Email :* ' + email,
+      '',
+      '*Motif :* ' + type,
+      '*Date souhaitée :* ' + dateFormatted,
+      '*Créneau :* ' + time,
+      '',
+      '---',
+      'Envoyé depuis le site du cabinet'
+    ].join('\n');
+
+    const url = 'https://api.whatsapp.com/send?phone=' + CONFIG.whatsappNumber +
+                '&text=' + encodeURIComponent(msg);
+
+    window.open(url, '_blank');
+
+    showToast('Merci ' + name + ', votre demande a été préparée.');
+
+    setTimeout(() => {
+      bookingModal.close();
+      document.getElementById('booking-form').reset();
+    }, 800);
   });
 
-  // ---- CONTACT FORM → WHATSAPP ----
+  // ============================================================
+  // 7. CONTACT FORM → WHATSAPP (version nettoyée)
+  // ============================================================
   document.getElementById('contact-form').addEventListener('submit', e => {
     e.preventDefault();
+
     const name = document.getElementById('f-name').value.trim();
     const phone = document.getElementById('f-phone').value.trim();
     const email = document.getElementById('f-email').value.trim();
     const subject = document.getElementById('f-subject').value;
     const message = document.getElementById('f-message').value.trim();
-    if (!name || !email || !message) { showToast('⚠️ Veuillez remplir les champs obligatoires.'); return; }
-    const msg = `*Nouveau message du site*\n\n👤 ${name}\n📞 ${phone || '—'}\n✉️ ${email}\n📋 ${subject}\n\n💬 ${message}`;
-    window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-    showToast(`✅ Merci ${name}, votre message va être transmis.`);
+
+    if (!name || !email || !message) {
+      showToast('Veuillez remplir les champs obligatoires.');
+      return;
+    }
+
+    const msg = [
+      '*NOUVEAU MESSAGE DEPUIS LE SITE*',
+      '',
+      '*Nom :* ' + name,
+      '*Téléphone :* ' + (phone || '—'),
+      '*Email :* ' + email,
+      '*Sujet :* ' + subject,
+      '',
+      '*Message :*',
+      message,
+      '',
+      '---',
+      'Envoyé depuis le formulaire de contact'
+    ].join('\n');
+
+    const url = 'https://api.whatsapp.com/send?phone=' + CONFIG.whatsappNumber +
+                '&text=' + encodeURIComponent(msg);
+
+    window.open(url, '_blank');
+
+    showToast('Merci ' + name + ', votre message va être transmis.');
+
     e.target.reset();
   });
 
-  // ---- TOAST ----
+  // ============================================================
+  // 8. TOAST NOTIFICATIONS
+  // ============================================================
   function showToast(text) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.textContent = text;
     container.appendChild(toast);
+
     setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(40px)';
@@ -423,54 +513,93 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 5000);
   }
 
-  // ---- REVEAL ----
+  // ============================================================
+  // 9. REVEAL ON SCROLL
+  // ============================================================
   const revealObs = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('active'); revealObs.unobserve(e.target); }
+      if (e.isIntersecting) {
+        e.target.classList.add('active');
+        revealObs.unobserve(e.target);
+      }
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
   document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-  // ---- COUNTERS ----
+  // ============================================================
+  // 10. COUNTERS
+  // ============================================================
   const statsObs = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) { animateCounter(e.target, parseInt(e.target.dataset.target, 10)); statsObs.unobserve(e.target); }
+      if (e.isIntersecting) {
+        animateCounter(e.target, parseInt(e.target.dataset.target, 10));
+        statsObs.unobserve(e.target);
+      }
     });
   }, { threshold: 0.5 });
+
   document.querySelectorAll('.stat-num').forEach(el => statsObs.observe(el));
 
   function animateCounter(el, target) {
     const start = performance.now();
     const duration = 1600;
+
     function tick(now) {
       const p = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - p, 3);
       el.textContent = Math.round(eased * target);
-      if (p < 1) requestAnimationFrame(tick);
-      else el.textContent = target;
+      if (p < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = target;
+        el.classList.add('completed');
+        setTimeout(() => el.classList.remove('completed'), 800);
+      }
     }
     requestAnimationFrame(tick);
   }
 
-  // ---- MOBILE MENU ----
+  // ============================================================
+  // 11. MOBILE MENU
+  // ============================================================
   const navToggle = document.getElementById('nav-toggle');
   const navLinks = document.getElementById('nav-links');
-  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
-  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
 
-  // ---- DETAIL MODAL ----
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  // ============================================================
+  // 12. LEGAL / PRIVACY DETAIL MODAL
+  // ============================================================
   const detailBody = document.getElementById('detail-modal-body');
 
   const detailContent = {
     mentions: {
-      fr: `<h3>Mentions Légales</h3><p><b>Éditeur :</b> Cabinet de Maître DJAÉ OULOVAVO Mohamed</p><p><b>Qualité :</b> Avocat au Barreau de Moroni — Docteur en droit privé</p><p><b>Adresse :</b> Moroni, Grande Comore, Union des Comores</p><p><b>Contact :</b> contact@cabinet-oulovavo.com / +33 6 46 13 52 01</p>`,
-      en: `<h3>Legal Notice</h3><p><b>Editor:</b> Law firm of Attorney Mohamed Djaé Oulovavo</p><p><b>Capacity:</b> Attorney at the Moroni Bar — PhD in Private Law</p><p><b>Address:</b> Moroni, Grand Comore, Union of the Comoros</p>`,
-      ar: `<h3>الإشعارات القانونية</h3><p><b>الناشر:</b> مكتب الأستاذ محمد دجاي أولوفافو</p><p><b>الصفة:</b> محامٍ بهيئة موروني</p>`
+      fr: `<h3>Mentions Légales</h3>
+        <p><b>Éditeur :</b> Cabinet de Maître DJAÉ OULOVAVO Mohamed</p>
+        <p><b>Qualité :</b> Avocat au Barreau de Moroni — Docteur en droit privé</p>
+        <p><b>Adresse :</b> Moroni, Grande Comore, Union des Comores</p>
+        <p><b>Contact :</b> contact@cabinet-oulovavo.com / +33 6 46 13 52 01</p>`,
+      en: `<h3>Legal Notice</h3>
+        <p><b>Editor:</b> Law firm of Attorney Mohamed Djaé Oulovavo</p>
+        <p><b>Capacity:</b> Attorney at the Moroni Bar — PhD in Private Law</p>
+        <p><b>Address:</b> Moroni, Grand Comore, Union of the Comoros</p>`,
+      ar: `<h3>الإشعارات القانونية</h3>
+        <p><b>الناشر:</b> مكتب الأستاذ محمد دجاي أولوفافو</p>
+        <p><b>الصفة:</b> محامٍ بهيئة موروني</p>`
     },
     privacy: {
-      fr: `<h3>Politique de Confidentialité</h3><p>Le Cabinet garantit le secret professionnel absolu et la confidentialité de toutes les informations transmises via ce site.</p><p>Les données saisies sont destinées exclusivement au traitement de votre demande.</p>`,
-      en: `<h3>Privacy Policy</h3><p>The firm guarantees absolute professional secrecy and confidentiality for all information submitted via this website.</p><p>Data entered is used exclusively to process your inquiry.</p>`,
-      ar: `<h3>سياسة الخصوصية</h3><p>يضمن المكتب السر المهني المطلق وسرية جميع المعلومات المرسلة عبر هذا الموقع.</p>`
+      fr: `<h3>Politique de Confidentialité</h3>
+        <p>Le Cabinet garantit le secret professionnel absolu et la confidentialité de toutes les informations transmises via ce site.</p>
+        <p>Les données saisies sont destinées exclusivement au traitement de votre demande et ne sont jamais cédées à des tiers.</p>`,
+      en: `<h3>Privacy Policy</h3>
+        <p>The firm guarantees absolute professional secrecy and confidentiality for all information submitted via this website.</p>
+        <p>Data entered is used exclusively to process your inquiry and is never transferred to third parties.</p>`,
+      ar: `<h3>سياسة الخصوصية</h3>
+        <p>يضمن المكتب السر المهني المطلق وسرية جميع المعلومات المرسلة عبر هذا الموقع.</p>`
     }
   };
 
@@ -484,7 +613,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ---- SMOOTH ANCHOR ----
+  // ============================================================
+  // 13. SMOOTH ANCHOR SCROLL (offset sticky nav)
+  // ============================================================
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       const id = a.getAttribute('href');
@@ -498,111 +629,93 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-// ✨ NOUVEAUX BLOCS D'ANIMATION
-// ============================================================
+  // 14. PARALLAXE DES ORBES AU MOUVEMENT DE LA SOURIS
+  // ============================================================
+  const orbs = document.querySelectorAll('.orb');
+  let mouseX = 0, mouseY = 0;
+  let currentOrbX = 0, currentOrbY = 0;
 
-// ---- 1. PARALLAXE DES ORBES AU MOUVEMENT DE LA SOURIS ----
-const orbs = document.querySelectorAll('.orb');
-let mouseX = 0, mouseY = 0;
-let currentOrbX = 0, currentOrbY = 0;
-
-document.addEventListener('mousemove', e => {
-  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-});
-
-function animateOrbs() {
-  currentOrbX += (mouseX - currentOrbX) * 0.06;
-  currentOrbY += (mouseY - currentOrbY) * 0.06;
-  orbs.forEach((orb, i) => {
-    const depth = (i + 1) * 12;
-    orb.style.transform = `translate(${currentOrbX * depth}px, ${currentOrbY * depth}px)`;
+  document.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
   });
-  requestAnimationFrame(animateOrbs);
-}
-if (orbs.length) animateOrbs();
 
-// ---- 2. EFFET TILT 3D SUR LES CARTES ----
-const tiltCards = document.querySelectorAll('.domain-card, .value-card, .teach-card');
+  function animateOrbs() {
+    currentOrbX += (mouseX - currentOrbX) * 0.06;
+    currentOrbY += (mouseY - currentOrbY) * 0.06;
+    orbs.forEach((orb, i) => {
+      const depth = (i + 1) * 12;
+      orb.style.transform = `translate(${currentOrbX * depth}px, ${currentOrbY * depth}px)`;
+    });
+    requestAnimationFrame(animateOrbs);
+  }
+  if (orbs.length) animateOrbs();
 
-tiltCards.forEach(card => {
-  let rafId = null;
+  // ============================================================
+  // 15. EFFET TILT 3D SUR LES CARTES
+  // ============================================================
+  const tiltCards = document.querySelectorAll('.domain-card, .value-card, .teach-card');
 
-  card.addEventListener('mousemove', e => {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(() => {
-      const rect = card.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
+  tiltCards.forEach(card => {
+    let rafId = null;
 
-      const rotX = -y * 6;
-      const rotY = x * 6;
-      const lift = -8;
+    card.addEventListener('mousemove', e => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-      card.style.transform = `perspective(1000px) translateY(${lift}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        const rotX = -y * 6;
+        const rotY = x * 6;
+        const lift = -8;
+
+        card.style.transform = `perspective(1000px) translateY(${lift}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      });
+    });
+
+    card.addEventListener('mouseleave', () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      card.style.transform = '';
     });
   });
 
-  card.addEventListener('mouseleave', () => {
-    if (rafId) cancelAnimationFrame(rafId);
-    card.style.transform = '';
+  // ============================================================
+  // 16. EFFET RIPPLE SUR LES BOUTONS
+  // ============================================================
+  document.querySelectorAll('.cta-btn, .nav-cta-btn, .float-btn, .domain-cta-btn').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      const rect = this.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 800);
+    });
   });
-});
 
-// ---- 3. EFFET RIPPLE SUR LES BOUTONS ----
-document.querySelectorAll('.cta-btn, .nav-cta-btn, .float-btn, .domain-cta-btn').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    const rect = this.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple';
+  // ============================================================
+  // 17. NAVIGATION ACTIVE AU SCROLL
+  // ============================================================
+  const sections = document.querySelectorAll('section[id]');
+  const navAnchors = document.querySelectorAll('nav.links a');
 
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navAnchors.forEach(a => {
+          a.classList.toggle('nav-link-active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-120px 0px -50% 0px' });
 
-    this.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 800);
-  });
-});
-
-// ---- 4. NAVIGATION ACTIVE AU SCROLL ----
-const sections = document.querySelectorAll('section[id]');
-const navAnchors = document.querySelectorAll('nav.links a');
-
-const sectionObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.getAttribute('id');
-      navAnchors.forEach(a => {
-        a.classList.toggle('nav-link-active', a.getAttribute('href') === '#' + id);
-      });
-    }
-  });
-}, { threshold: 0.3, rootMargin: '-120px 0px -50% 0px' });
-
-sections.forEach(s => sectionObserver.observe(s));
-
-// ---- 5. PULSE DES COMPTEURS APRÈS ANIMATION ----
-// Modifiez la fonction animateCounter pour ajouter la classe "completed"
-// Remplacez la fonction existante par celle-ci :
-
-function animateCounter(el, target) {
-  const start = performance.now();
-  const duration = 1600;
-  function tick(now) {
-    const p = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(eased * target);
-    if (p < 1) {
-      requestAnimationFrame(tick);
-    } else {
-      el.textContent = target;
-      el.classList.add('completed');
-      setTimeout(() => el.classList.remove('completed'), 800);
-    }
-  }
-  requestAnimationFrame(tick);
-}
+  sections.forEach(s => sectionObserver.observe(s));
 
 });
