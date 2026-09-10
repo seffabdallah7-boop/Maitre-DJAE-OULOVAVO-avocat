@@ -1,12 +1,41 @@
 /* ==========================================================================
    Maître DJAÉ OULOVAVO Mohamed — Application JS
-   Version optimisée : performances + responsive animations
+   Version sécurisée : obfuscation contacts + honeypot + performances
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ============================================================
+  // 🛡️ OBFUSCATION TÉLÉPHONE / EMAIL / WHATSAPP (anti-robots)
+  // ============================================================
+  const PHONE_PARTS = ['33', '6', '46', '13', '52', '01'];
+  const PHONE_LOCAL = '+' + PHONE_PARTS.join(' ');
+  const PHONE_LINK  = '+' + PHONE_PARTS.join('');
+  const PHONE_WA    = PHONE_PARTS.join('');
+
+  const EMAIL_USER = 'contact';
+  const EMAIL_DOMAIN = 'cabinet-oulovavo.com';
+  const EMAIL_FULL = EMAIL_USER + '@' + EMAIL_DOMAIN;
+
+  // Appliquer après le chargement
+  function revealContacts() {
+    document.querySelectorAll('.js-phone').forEach(el => {
+      el.href = 'tel:' + PHONE_LINK;
+      el.textContent = PHONE_LOCAL;
+    });
+    document.querySelectorAll('.js-email').forEach(el => {
+      el.href = 'mailto:' + EMAIL_FULL;
+      el.textContent = EMAIL_FULL;
+    });
+    document.querySelectorAll('.js-whatsapp').forEach(el => {
+      el.href = 'https://wa.me/' + PHONE_WA;
+    });
+  }
+
+  revealContacts();
+
   const CONFIG = {
-    whatsappNumber: '33646135201',
+    whatsappNumber: PHONE_WA,
   };
 
   const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -322,6 +351,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (dict[key]) el.textContent = dict[key];
     });
 
+    // Ré-applique les contacts obfusqués après changement de langue
+    revealContacts();
+
     localStorage.setItem('mdo_lang', lang);
   }
 
@@ -451,10 +483,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // 7. CONTACT FORM → WHATSAPP
+  // 7. CONTACT FORM → WHATSAPP (avec honeypot anti-spam)
   // ============================================================
   document.getElementById('contact-form').addEventListener('submit', e => {
     e.preventDefault();
+
+    // 🛡️ Vérification honeypot : si le champ caché est rempli → robot
+    const honeypot = document.getElementById('f-website');
+    if (honeypot && honeypot.value !== '') {
+      // Robot détecté — on ignore silencieusement (aucun message)
+      return;
+    }
 
     const name = document.getElementById('f-name').value.trim();
     const phone = document.getElementById('f-phone').value.trim();
@@ -577,7 +616,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p><b>Éditeur :</b> Cabinet de Maître DJAÉ OULOVAVO Mohamed</p>
         <p><b>Qualité :</b> Avocat au Barreau de Moroni — Docteur en droit privé</p>
         <p><b>Adresse :</b> Moroni, Grande Comore, Union des Comores</p>
-        <p><b>Contact :</b> contact@cabinet-oulovavo.com / +33 6 46 13 52 01</p>`,
+        <p><b>Contact :</b> ${EMAIL_FULL} / ${PHONE_LOCAL}</p>`,
       en: `<h3>Legal Notice</h3>
         <p><b>Editor:</b> Law firm of Attorney Mohamed Djaé Oulovavo</p>
         <p><b>Capacity:</b> Attorney at the Moroni Bar — PhD in Private Law</p>
